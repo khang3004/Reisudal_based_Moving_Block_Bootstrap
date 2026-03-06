@@ -1,0 +1,33 @@
+\begin{frame}{Time Series Basics: Stationarity Conditions}
+    \begin{center}
+    \begin{tikzpicture}[
+        node distance=1.5cm and 2cm,
+        box/.style={draw=blue!50, thick, rounded corners, fill=blue!5, text width=5cm, align=center, inner sep=10pt},
+        title/.style={font=\bfseries\large, text=blue!80!black, yshift=5pt}
+    ]
+        % SSS Node
+        \node[box] (sss) {
+            \node[title] at (0, 1.2) {Strictly Stationary (SSS)};
+            \vspace{0.5cm}
+            Joint distribution is invariant to time shifts $\tau$:
+            $$F_X(x_{t_1}, \dots, x_{t_k}) = F_X(x_{t_1+\tau}, \dots, x_{t_k+\tau})$$
+            \textit{(Too strict for real-world empirical data)}
+        };
+
+        % WSS Node
+        \node[box, right=of sss, draw=green!60!black, fill=green!5] (wss) {
+            \node[title, text=green!60!black] at (0, 1.2) {Weakly Stationary (WSS)};
+            \vspace{0.5cm}
+            First two moments are time-invariant:
+            $$ \begin{cases}
+            \mu_X(t) = \text{const}, \forall t \\
+            R_X(t_i, t_j) = R_X(|t_i - t_j|)
+            \end{cases} $$
+            \textit{(Our primary assumption for modeling)}
+        };
+
+        % Arrow connecting them
+        \draw[-{Stealth[scale=1.5]}, thick, gray, dashed] (sss) -- node[above, font=\footnotesize] {Implies} (wss);
+    \end{tikzpicture}
+    \end{center}
+\end{frame}

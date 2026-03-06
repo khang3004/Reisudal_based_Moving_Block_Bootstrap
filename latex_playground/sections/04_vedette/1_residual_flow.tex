@@ -1,0 +1,13 @@
+\begin{frame}{The Vedette: Residual-based Block Bootstrap}
+    \textbf{Mathematical Pipeline:}
+    \vspace{0.3cm}
+
+    \begin{enumerate}
+        \item \textbf{Model Fitting:} Extract deterministic trend $\hat{y}_t$.
+        \item \textbf{Residual Extraction:} Isolate the stochastic component.
+        $$r_t = y_t - \hat{y}_t \quad (t = 1, \dots, T)$$
+        \item \textbf{Moving Block Engine:} Resample $r_t$ in overlapping blocks to preserve autocorrelation $R_X \neq 0$, generating $r_t^*$.
+        \item \textbf{Scenario Reconstruction:} Generate synthetic trajectories.
+        $$y_t^* = \hat{y}_t + r_t^*$$
+    \end{enumerate}
+\end{frame}

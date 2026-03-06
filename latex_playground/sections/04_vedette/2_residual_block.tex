@@ -1,0 +1,37 @@
+\begin{frame}{The Master Pipeline: Residual-based Block Bootstrap}
+    \begin{center}
+    \resizebox{\textwidth}{!}{% Resize để vừa màn hình 16:9
+    \begin{tikzpicture}[
+        ->, >=Stealth, thick, node distance=1cm and 1.5cm,
+        step/.style={draw=black, thick, rounded corners, fill=white, text width=3.5cm, align=center, inner sep=8pt},
+        math/.style={font=\bfseries\color{blue!80!black}},
+        note/.style={font=\footnotesize\itshape\color{gray}}
+    ]
+
+        % Nodes
+        \node[step] (data) {1. Raw Data \\ \math{$y_t, \forall t = 1, \dots, T$}};
+
+        \node[step, right=of data] (model) {2. Model Fit (ARIMA) \\ \math{$\hat{y}_t = f(y_{t-1}, \dots)$}};
+
+        \node[step, right=of model] (resid) {3. Extract Residuals \\ \math{$\hat{\epsilon}_t = y_t - \hat{y}_t$}};
+
+        \node[step, below=of resid, draw=orange, fill=orange!10] (block) {4. \textbf{Moving Block} \\ Engine \\ \math{$\hat{\epsilon}_t \xrightarrow{Block} \epsilon_t^*$}};
+
+        \node[step, left=of block, draw=red!70, fill=red!5] (recon) {5. Reconstruction \\ \math{$y_t^* = \hat{y}_t + \epsilon_t^*$}};
+
+        \node[step, left=of recon] (ci) {6. Inference (95\% CI) \\ \math{$[ \hat{y}_t^{(2.5\%)}, \hat{y}_t^{(97.5\%)} ]$}};
+
+        % Arrows
+        \draw (data) -- (model);
+        \draw (model) -- (resid);
+        \draw (resid) -- node[right, note] {Preserve $R_X \neq 0$} (block);
+        \draw (block) -- node[above, note] {Loop B times} (recon);
+        \draw (recon) -- (ci);
+
+        % Feedback loop (B iterations)
+        \draw[dashed, blue] (recon.south) -- ++(0,-0.5) -| node[pos=0.25, below, note] {Generate $B$ synthetic trajectories} (block.south);
+
+    \end{tikzpicture}
+    }
+    \end{center}
+\end{frame}

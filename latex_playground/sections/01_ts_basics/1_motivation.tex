@@ -1,0 +1,13 @@
+\begin{frame}{The Pitfall: Temporal Dependency}
+    \textbf{Time Series Decomposition:}
+    $$Y_t = T_t + S_t + R_t$$
+    \vspace{0.2cm}
+
+    \textbf{The core assumption:} Time series data is often \textit{Weakly Stationary} (WSS), implying temporal dependency:
+    $$R_X(t_i, t_j) = \mathbb{E}[(X_{t_i} - \mu)(X_{t_j} - \mu)] \neq 0 \quad \text{for } t_i \neq t_j$$
+    \vspace{0.2cm}
+
+    \begin{alertblock}{The Problem}
+        Standard Cross-Validation or simple resampling \textbf{destroys} the autocorrelation structure $R_X(t_i, t_j)$, leading to severe \textit{Data Leakage}.
+    \end{alertblock}
+\end{frame}
