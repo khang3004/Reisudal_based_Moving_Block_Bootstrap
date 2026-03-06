@@ -1,0 +1,127 @@
+% =========================================================================
+% SLIDE 1: NỖI ĐAU - TẠI SAO K-FOLD LẠI LÀ THẢM HỌA VỚI CHUỖI THỜI GIAN?
+% =========================================================================
+\begin{frame}[fragile]{Model Evaluation: The Danger of Standard K-Fold}
+    \begin{center}
+    \begin{tikzpicture}[
+        scale=0.9, transform shape,
+        ->, >=latex, thick,
+        datapoint/.style={circle, inner sep=3pt},
+        mathnote/.style={font=\small, align=left, draw=red!70, fill=red!5, rounded corners, inner sep=10pt}
+    ]
+        % Tiêu đề phụ
+        \node[font=\bfseries\Large, text=red!80!black] at (5.5, 2.5) {Standard K-Fold CV causes Data Leakage};
+
+        % Trục thời gian chính
+        \draw[->, gray, very thick] (0, 0) -- (11.5, 0) node[right] {Time $t$};
+
+        % Vẽ các điểm dữ liệu bị xáo trộn ngẫu nhiên (Fold k làm test)
+        % Đỏ = Test, Xanh = Train. t=2, t=6, t=9 là Test.
+        \foreach \t/\col in {1/blue!40, 2/red, 3/blue!40, 4/blue!40, 5/blue!40, 6/red, 7/blue!40, 8/blue!40, 9/red, 10/blue!40, 11/blue!40} {
+            \node[datapoint, fill=\col, draw=\col!80!black] (p\t) at (\t, 0) {};
+            \node[below=5pt, font=\scriptsize, gray] at (p\t) {$t_{\t}$};
+        }
+
+        % Minh họa rò rỉ: Dùng tương lai (t=7) để dự báo quá khứ (t=2)
+        \draw[red, very thick, bend right=45, dashed] (p7.north) to node[above=5pt, font=\bfseries\large, text=red] {Hindsight Bias!} (p2.north);
+
+        % Chú thích Train/Test (Legend)
+        \node[datapoint, fill=blue!40, draw=blue!80!black] at (3, -1.5) {};
+        \node[right, font=\small, text=darkgray] at (3.2, -1.5) {Training Set};
+        \node[datapoint, fill=red, draw=red!80!black] at (6, -1.5) {};
+        \node[right, font=\small, text=darkgray] at (6.2, -1.5) {Testing Set};
+
+        % Toán học của sự sai lầm (Đóng khung trang trọng)
+        \node[mathnote] at (5.5, -3.8) {
+            \textbf{Mathematical Violation:} \\
+            The training set contains future information relative to the test set. \\
+            $\mathcal{D}_{train} \cap \{y_{t+k} : y_t \in \mathcal{D}_{test}, k>0\} \neq \emptyset$ \\
+            $\Rightarrow$ Violates the temporal filtration $\mathcal{F}_t$ (destroys the arrow of time).
+        };
+
+        % Dấu X đỏ cảnh báo chìm ở nền
+        \node[font=\fontsize{60}{70}\selectfont, text=red, opacity=0.15] at (5.5, 0) {✗};
+
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+
+% =========================================================================
+% SLIDE 2: GIẢI PHÁP - EXPANDING VS SLIDING WINDOW (BẢO VỆ MŨI TÊN THỜI GIAN)
+% =========================================================================
+\begin{frame}[fragile]{Model Evaluation: Valid Time Series Splits}
+    \begin{center}
+    \begin{tikzpicture}[
+        scale=0.82, transform shape,
+        % Định nghĩa style cho các khối dữ liệu
+        train/.style={draw=blue!80!black, fill=blue!50, rounded corners=2pt, minimum width=0.85cm, minimum height=0.5cm},
+        test/.style={draw=orange!80!black, fill=orange!70, rounded corners=2pt, minimum width=0.85cm, minimum height=0.5cm},
+        mathnote/.style={font=\small, align=left, draw=green!60!black, fill=green!5, rounded corners, inner sep=10pt, text width=13cm}
+    ]
+
+        % ==========================================
+        % CỘT 1: TIME SERIES SPLIT (EXPANDING WINDOW)
+        % ==========================================
+        % Sửa lỗi dính chữ: Đưa về chính giữa cột 1 (x=3) và ngắt dòng
+        \node[font=\bfseries\large, text=green!60!black, align=center] at (3, 0.5) {1. Time Series Split \\ \normalsize (Expanding Window)};
+
+        % Iteration 1
+        \node[anchor=east, font=\footnotesize, text=darkgray] at (-0.2, -1) {Iter 1};
+        \node[train] at (1, -1) {}; \node[train] at (1.95, -1) {}; \node[test] at (2.9, -1) {};
+
+        % Iteration 2
+        \node[anchor=east, font=\footnotesize, text=darkgray] at (-0.2, -1.8) {Iter 2};
+        \node[train] at (1, -1.8) {}; \node[train] at (1.95, -1.8) {}; \node[train] at (2.9, -1.8) {}; \node[test] at (3.85, -1.8) {};
+
+        % Iteration 3
+        \node[anchor=east, font=\footnotesize, text=darkgray] at (-0.2, -2.6) {Iter 3};
+        \node[train] at (1, -2.6) {}; \node[train] at (1.95, -2.6) {}; \node[train] at (2.9, -2.6) {}; \node[train] at (3.85, -2.6) {}; \node[test] at (4.8, -2.6) {};
+
+        \draw[->, thick, gray] (0.5, -3.2) -- (5.5, -3.2) node[right, font=\footnotesize] {Time $t$};
+
+        % ==========================================
+        % CỘT 2: BLOCKED CROSS-VALIDATION (SLIDING WINDOW)
+        % ==========================================
+        % Sửa lỗi dính chữ: Đưa về chính giữa cột 2 (x=10.5) và ngắt dòng
+        \node[font=\bfseries\large, text=green!60!black, align=center] at (10.5, 0.5) {2. Blocked CV \\ \normalsize (Sliding Window)};
+
+        % Iteration 1
+        \node[anchor=east, font=\footnotesize, text=darkgray] at (7.3, -1) {Iter 1};
+        \node[train] at (8.5, -1) {}; \node[train] at (9.45, -1) {}; \node[test] at (10.4, -1) {};
+
+        % Iteration 2
+        \node[anchor=east, font=\footnotesize, text=darkgray] at (7.3, -1.8) {Iter 2};
+        \node[train] at (9.45, -1.8) {}; \node[train] at (10.4, -1.8) {}; \node[test] at (11.35, -1.8) {};
+
+        % Iteration 3
+        \node[anchor=east, font=\footnotesize, text=darkgray] at (7.3, -2.6) {Iter 3};
+        \node[train] at (10.4, -2.6) {}; \node[train] at (11.35, -2.6) {}; \node[test] at (12.3, -2.6) {};
+
+        \draw[->, thick, gray] (8.0, -3.2) -- (13.0, -3.2) node[right, font=\footnotesize] {Time $t$};
+
+        % ==========================================
+        % LEGEND & TOÁN HỌC CHỐT HẠ (MATH COMPLIANCE)
+        % ==========================================
+
+        % Chú thích màu sắc (Legend)
+        \node[train, minimum width=0.6cm, minimum height=0.3cm] at (4.5, -4.2) {};
+        \node[anchor=west, font=\footnotesize] at (4.9, -4.2) {Training Set};
+        \node[test, minimum width=0.6cm, minimum height=0.3cm] at (7.5, -4.2) {};
+        \node[anchor=west, font=\footnotesize] at (7.9, -4.2) {Testing Set};
+
+        % Hộp toán học
+        \node[mathnote] at (6.5, -6.1) {
+            \textbf{Mathematical Compliance (Respecting Filtration $\mathcal{F}_t$):} \\
+            Both strategies strictly ensure $\max(\text{time}(\mathcal{D}_{train})) < \min(\text{time}(\mathcal{D}_{test}))$. \\
+            \vspace{0.15cm}
+            $\bullet$ \textbf{Expanding:} $\mathcal{D}_{train}^{(i)} = \{y_1, \dots, y_{T_i}\}$ \textit{(Uses all available past history)}. \\
+            $\bullet$ \textbf{Sliding:} $\mathcal{D}_{train}^{(i)} = \{y_{T_i-w+1}, \dots, y_{T_i}\}$ \textit{(Uses a fixed-window $w$, adapts to non-stationarity)}.
+        };
+
+        % Dấu check xanh chìm ở nền
+        \node[font=\fontsize{60}{70}\selectfont, text=green!60!black, opacity=0.08] at (6.5, -2) {✓};
+
+    \end{tikzpicture}
+    \end{center}
+\end{frame}

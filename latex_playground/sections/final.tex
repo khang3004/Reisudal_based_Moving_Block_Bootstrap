@@ -1,0 +1,60 @@
+% --- FINAL SLIDE: THE HACKER Q&A ---
+\begin{frame}[fragile, plain]
+    \begin{center}
+    \begin{tikzpicture}[
+        scale=0.85, transform shape, % Chỉnh scale an toàn để Terminal to ra mà không tràn slide
+        % Bóng đổ 3D
+        shadow/.style={fill=black!30, rounded corners=6pt, minimum width=14.4cm, minimum height=9.8cm},
+        % Cửa sổ Terminal siêu rộng
+        terminal/.style={draw=darkgray!80, thick, rounded corners=6pt, fill=black!85, inner sep=0pt, minimum width=14.2cm, minimum height=9.6cm},
+        % Thanh Header
+        header/.style={fill=gray!20, rounded corners=6pt, minimum height=0.7cm, minimum width=14.2cm, anchor=north},
+        % Nút bấm Mac
+        macbutton/.style={circle, inner sep=1.5pt, draw=black!40, thick}
+    ]
+
+        % 1. Vẽ bóng đổ
+        \node[shadow] at (0.15, -0.15) {};
+
+        % 2. Vẽ khung Terminal
+        \node[terminal] (term) at (0,0) {};
+
+        % 3. Vẽ thanh Header
+        \node[header] (head) at (term.north) {};
+
+        % Phay phẳng góc bo tròn cạnh dưới của Header
+        \fill[gray!20] ([yshift=-0.4cm]head.north west) rectangle ([yshift=-0.7cm]head.north east);
+        \draw[darkgray!80, thick] ([yshift=-0.7cm]term.north west) -- ([yshift=-0.7cm]term.north east);
+
+        % 4. Nút MacOS (Red, Yellow, Green)
+        \node[macbutton, fill=red!80] at ([xshift=0.7cm, yshift=-0.35cm]term.north west) {};
+        \node[macbutton, fill=yellow!80] at ([xshift=1.15cm, yshift=-0.35cm]term.north west) {};
+        \node[macbutton, fill=green!80] at ([xshift=1.6cm, yshift=-0.35cm]term.north west) {};
+
+        % 5. Tiêu đề Terminal (Zsh)
+        \node[font=\footnotesize\ttfamily, text=darkgray] at ([yshift=-0.35cm]term.north) {\char`\~ /bootstrap\_project \textemdash{} zsh \textemdash{} 120x30};
+
+        % 6. Nội dung Code (Thêm môi trường ảo PyCharm và đổi dấu % chuẩn Zsh)
+        \node[anchor=north west, font=\ttfamily\small\color{white}, align=left, text width=13.5cm] at ([xshift=0.4cm, yshift=-1.1cm]term.north west) {
+            {\color{green!80!black}(bootstrap-env)} {\color{green!60!white}\textbf{khangds@MacBook-Pro}}{\color{white}:}{\color{blue!40!white}\textbf{\char`\~}}{\color{magenta}\textbf{\%}} ./conclude\_presentation.sh \\[0.15cm]
+            \textcolor{gray}{[INFO]} Terminating stochastic processes... \textcolor{green!60!white}{Done.} \\
+            \textcolor{gray}{[INFO]} Temporal dependencies preserved successfully. \\
+            \textcolor{gray}{[INFO]} 95\% CI Band rendered cleanly. \\[0.3cm]
+
+            {\color{green!80!black}(bootstrap-env)} {\color{green!60!white}\textbf{khangds@MacBook-Pro}}{\color{white}:}{\color{blue!40!white}\textbf{\char`\~}}{\color{magenta}\textbf{\%}} tree . -L 1 \\[0.15cm]
+            \textcolor{cyan}{.} \\
+            \textcolor{cyan}{├──} \textcolor{white}{docker-compose.yml} \textcolor{gray}{\# Reproducible environment} \\
+            \textcolor{cyan}{├──} \textcolor{white}{main.tex} \textcolor{gray}{\# Beamer presentation source} \\
+            \textcolor{cyan}{└──} \textcolor{white}{experiments.py} \textcolor{gray}{\# Empirical bootstrap engine} \\[0.3cm]
+
+            {\color{green!80!black}(bootstrap-env)} {\color{green!60!white}\textbf{khangds@MacBook-Pro}}{\color{white}:}{\color{blue!40!white}\textbf{\char`\~}}{\color{magenta}\textbf{\%}} cat contact\_info.txt \\[0.15cm]
+            \textcolor{yellow}{Email:} 21C0103580@student.hcmus.edu.vn \\
+            \textcolor{yellow}{Git Repo:} github.com/khang3004/Residual\_based\_Moving\_Block\_Bootstrap.git \\[0.3cm]
+
+            {\color{green!80!black}(bootstrap-env)} {\color{green!60!white}\textbf{khangds@MacBook-Pro}}{\color{white}:}{\color{blue!40!white}\textbf{\char`\~}}{\color{magenta}\textbf{\%}} prompt\_audience --mode="Q\&A" \\[0.15cm]
+            > \textbf{\textcolor{green!40!white}{System is now listening for questions...}} \textcolor{white}{\rule{2mm}{4mm}}
+        };
+
+    \end{tikzpicture}
+    \end{center}
+\end{frame}
